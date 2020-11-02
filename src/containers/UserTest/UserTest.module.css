@@ -1,0 +1,14 @@
+.UserTest {
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  margin: auto;
+  padding: 0 10px 10px 10px;
+  max-width: 80%;
+}
+
+.UserTest input:hover, label:hover {
+ cursor: pointer;
+}
+.Question {
+  font-size: 20px;
+}
