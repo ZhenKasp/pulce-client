@@ -1,0 +1,46 @@
+.Modal {
+  position: fixed;
+  width: 349px;
+  z-index: 5;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  padding: 16px;
+  left: calc(50% - 349px /2);
+  top: 3%;
+  box-sizing: border-box;
+  transition: all 0.3s ease-out;
+  color: black;
+  max-height: calc(100vh - 6%);
+  overflow-y: auto;
+}
+
+@media (max-height: 820px) {
+  .Modal {
+    top: 8%;
+    max-height: calc(100vh - 16%);
+    width: 319px;
+    left: calc(50% - 319px /2);
+  }
+}
+
+.Close {
+  float: right;
+}
+
+.Close:hover {
+  cursor: pointer;
+}
+
+.Close:after {
+  content: "\00d7";
+  font-size: 40px;
+  position: absolute;
+  right: 7px;
+  top: -13px;
+  color: gray;
+}
+
+.Modal textarea {
+  max-height: 120px;
+}

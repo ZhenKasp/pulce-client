@@ -1,0 +1,15 @@
+.SignIn {
+  display: block;
+  width: 100%;
+  max-width: 330px;
+  padding: 25px;
+  margin: 0 auto;
+  border-radius: 5px;
+  margin-top: 50px;
+}
+
+.SignIn Button {
+  width: 100%;
+  margin-top: 20px;
+  height: 45px;
+}

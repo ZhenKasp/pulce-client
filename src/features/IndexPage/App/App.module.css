@@ -1,0 +1,25 @@
+.Card {
+  background-color: #f8f8f8;
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 30px auto 0px auto;
+  cursor: pointer;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.37);
+  transition: box-shadow 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 5px 10px;
+  flex: 1;
+  display: flex;
+}
+
+.Card:hover {
+  box-shadow: 0 0px 7px #888;
+}
+
+.Wrapper {
+  outline: none;
+  background: white;
+  border-radius: 5px;
+  padding: 30px;
+  box-shadow: 0 0 4px #999;
+  margin: 20px;
+}
