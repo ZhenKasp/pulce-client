@@ -32,19 +32,21 @@
   margin-bottom: 0;
 }
 
-/* Checked */
 .Answer input[type=radio]:checked + label {
 	background: #ffe0a6;
 }
 
-/* Hover */
 .Answer label:hover {
 	color: #666;
   box-shadow: 0 0px 7px #888;
 }
 
-/* Disabled */
 .Answer input[type=radio]:disabled + label {
 	background: #efefef;
 	color: #666;
+}
+
+.Loading {
+  width: 64px;
+  margin: calc((100vh - 64px) / 2) auto;
 }

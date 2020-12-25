@@ -5,21 +5,27 @@ import {
 } from "react-router-dom";
 import SignIn from './features/Authorisation/SignIn';
 import SignUp from './features/Authorisation/SignUp';
-import NavBar from './features/NavBar';
 import NotFound from './features/NotFound';
 import UserTest from './features/UserTest';
+import TestResults from './features/TestResults';
+import EditTest from './features/EditTest';
 import IndexPage from './features/IndexPage';
 
 const App = () => {
   return (
     <Router>
-      <NavBar />
       <Switch>
         <Route path="/" exact>
           <IndexPage />
         </Route>
         <Route path="/user_test/:id">
           <UserTest />
+        </Route>
+        <Route path="/test_results/:id">
+          <TestResults />
+        </Route>
+        <Route path="/edit_test/:id">
+          <EditTest />
         </Route>
         <Route path="/signin">
           <SignIn />

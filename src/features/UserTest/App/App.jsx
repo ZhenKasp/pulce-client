@@ -1,71 +1,90 @@
 import React, { useState, useEffect } from 'react';
-import classes from './UserTest.module.css';
+import classes from './App.module.css';
 import axios from 'axios';
 import { useHistory, useParams } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
+import ReactLoading from 'react-loading';
 
 const App = props => {
   let history = useHistory();
-    let { id } = useParams();
-  const [loading, setLoading] = useState(false);
-  const [question, setQuestion] = useState("1 + 1");
-  const [answers, setAnswers] = useState([
-    {id: 1, text: '1'},
-    {id: 2, text: '2'},
-    {id: 3, text: '3'},
-    {id: 4, text: '4'}
-  ]);
+  let { id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [question, setQuestion] = useState(null);
+  const [answers, setAnswers] = useState([]);
   const [userAnswer, setUserAnswer] = useState(null);
+  const [pulse, setPulse] = useState(null);
 
-  // useEffect(() => {
-  //   axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test/" + id,
-  //     { headers: { authorization: props.user }}
-  //   ).then(res => {
-  //     if (!res.data.errors) {
-  //       setQuestion(res.data.post );
-  //     } else {
-  //       history.replace('/notFound');
-  //     }
-  //   }).catch(err => {
-  //     console.log(err);
-  //     // props.createFlashMessage(err.message, "danger");
-  //     history.replace('/');
-  //   });
-  // }, []);
+  const getpulse = () => {
+    setPulse(getRandomInt(100));
+    try {
+      axios.get(process.env.REACT_APP_PATH_TO_SERVER + "pulse").then(res => {
+        if (res.data.error) {
+          alert(res.data.error)
+        } else {
+          setPulse(res.data.pulse);
+        }
+      })
+    } catch (err) {
+      console.log(err.message);
+
+    }
+  }
+
+  const getRandomInt = (max) => (
+    Math.floor(Math.random() * Math.floor(max))
+  )
+
+  useEffect(() => {
+    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test/" + id,
+      { headers: { authorization: props.user }}
+    ).then(res => {
+      if (res.data.error) {
+        alert(res.data.error)
+      } else {
+        setQuestion(res.data.question);
+        setAnswers(res.data.answers);
+        setLoading(false);
+      }
+    }).catch(err => {
+      console.log(err);
+      alert(err.message)
+
+      setQuestion(1);
+      setAnswers([
+        {id: 1, answer: '1'},
+        {id: 2, answer: '2'},
+        {id: 3, answer: '3'},
+        {id: 4, answer: '4'}
+      ]);
+      setLoading(false);
+    });
+    getpulse();
+    const interval = setInterval(() => {
+      getpulse();
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   const submit = () => {
     setLoading(true);
-    console.log(userAnswer);
     axios.post(process.env.REACT_APP_PATH_TO_SERVER, userAnswer).then(res => {
       if (res.data.error) {
         alert(res.data.error)
       } else {
         setLoading(false);
-        setQuestion("2 + 2 * 2");
-        setAnswers([
-          {id: 1, text: '6'},
-          {id: 2, text: '8'},
-          {id: 3, text: '10'},
-          {id: 4, text: '13'}
-        ])
+        setQuestion(res.data.question);
+        setAnswers(res.data.answers)
       }
     }).catch((e) => {
+      history.push("/test_results/" + id)
       setLoading(false);
-      setQuestion("2 + 2 * 2");
+      setQuestion(question * 2);
       setAnswers([
-        {id: 1, text: '6'},
-        {id: 2, text: '8'},
-        {id: 3, text: '10'},
-        {id: 4, text: '13'}
+        {id: 1, answer: '6'},
+        {id: 2, answer: '8'},
+        {id: 3, answer: '10'},
+        {id: 4, answer: '13'}
       ]);
-
-
-
-
-
-
-
-
       setUserAnswer(null);
       console.log(e);
     })
@@ -75,7 +94,6 @@ const App = props => {
     <div className={classes.UserTest}>
       <h1>UserTest</h1>
       <hr />
-      {console.log(loading)}
       {(!loading) ?
         <div>
           <p className={classes.Question}>{question}</p>
@@ -85,17 +103,22 @@ const App = props => {
                 <input
                   name="answer"
                   type="radio"
-                  value={answer.text}
+                  value={answer.answer}
                   id={`radioButton${answer.id}`}
                   onClick={() => setUserAnswer(answer.id)} />
                 <label htmlFor={`radioButton${answer.id}`}>
-                  {" " + answer.text}
+                  {" " + answer.answer}
                 </label><br />
               </div>
             )}
           )}
-          <Button onClick={submit}>Submit</Button>
-        </div> : <div>loading</div>}
+          <Button onClick={submit} disabled={!userAnswer}>Submit</Button>
+          <p>{pulse}</p>
+        </div> :
+        <div className={classes.Loading}>
+          <ReactLoading type={"spinningBubbles"} color="#000000" />
+        </div>
+      }
     </div>
   )
 }
