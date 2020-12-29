@@ -24,29 +24,35 @@ const App = (props) => {
       console.log(err);
       setTest({
         id: 1,
-        test_name: "First test",
+        name: "testname",
         questions: [
           {
-            id: 1,
-            question_name: "1 + 1",
-            answers: [
-              {id: 1, answer: '1'},
-              {id: 2, answer: '2'},
-              {id: 3, answer: '3'},
-              {id: 4, answer: '4'}
-            ],
-            user_answer_id: 2,
+            id: 3,
+            text: "questionname",
+            complexity: 3,
+            answers: []
           },
           {
             id: 2,
-            question_name: "2 + 2 * 2",
+            text: "qweqw",
+            complexity: 2,
             answers: [
-              {id: 5, answer: '8'},
-              {id: 6, answer: '6'},
-              {id: 7, answer: '7'},
-              {id: 8, answer: '10'}
-            ],
-            user_answer_id: 5,
+              { id: 8, text: "zxc", correct: false },
+              { id: 5, text: "qweq", correct: false },
+              { id: 7, text: "asdas", correct: false },
+              { id: 6, text: "qweasd", correct: true }
+            ]
+          },
+          {
+            id: 1,
+            text: "qweq",
+            complexity: 1,
+            answers: [
+              { id: 4, text: "zxc", correct: false },
+              { id: 1, text: "qweq", correct: true },
+              { id: 3, text: "asdas", correct: false },
+              { id: 2, text: "qwe", correct: false }
+            ]
           }
         ]
       });
@@ -55,51 +61,34 @@ const App = (props) => {
   }, []);
 
   const changeTestName = (data) => {
-    setTest({ ...test, test_name: data.test_name })
+    setTest({ ...test, name: data.name })
   }
 
-  const changeQuestionName = (data, id) => {
+  const changeQuestionName = (data, index) => {
     setTest(test => {
-      const questions = test.questions.map((item) => {
-        if (item.id === id) {
-          return {...item, question_name: data.question_name};
-        } else {
-          return item;
-        }
-      });
+      const questions = [...test.questions];
+      questions[index].text = data.text;
+
       return {
         ...test, questions
       };
     })
   }
 
-  const changeCorrectAnswer = (questionId, answerId) => {
+  const changeCorrectAnswer = (qIndex, aIndex) => {
     setTest(test => {
-      const questions = test.questions.map((item) => {
-        if (item.id === questionId) {
-          return {...item, correct_answer_id: answerId};
-        } else {
-          return item;
-        }
-      });
+      const questions = [...test.questions];
+      questions[qIndex].answers[aIndex].correct = !questions[qIndex].answers[aIndex].correct;
       return {
         ...test, questions
       };
     })
   }
 
-  const changeAnswer = (data, id) => {
+  const changeAnswer = (data, qIndex, aIndex) => {
     setTest(test => {
-      const questions = test.questions.map(item => {
-        const answers = item.answers.map(answer => {
-          if (answer.id === id) {
-            return {...answer, answer: data.answer};
-          } else {
-            return answer;
-          }
-        })
-        return {...item, answers}
-      });
+      const questions = [...test.questions];
+      questions[qIndex].answers[aIndex].text = data.text;
       return {
         ...test, questions
       };
@@ -107,41 +96,53 @@ const App = (props) => {
   }
 
   const addQuestion = () => {
-    axios.post(process.env.REACT_APP_PATH_TO_SERVER + "createEmptyQuestion")
-    .then(res => {
-      if (res.data.error) {
-        alert(res.data.error)
-      } else {
-        setTest(test => {
-          const questions = [
-            test.questions,
-            {
-              id: res.data.id,
-              question_name: "",
-              answers: [{}, {}, {}, {}]
-            }
-          ]
-          return {
-            ...test, questions
-          };
-        })
-      }
-    }).catch(err => {
-      setTest(test => {
-        const questions = [
-          ...test.questions,
-          {
-            id: 0,
-            question_name: " ",
-            answers: [{}, {}, {}, {}],
-            correct_answer_id: 0
-          }
-        ]
-        return {
-          ...test, questions
-        };
-      })
-      console.log(err);
+    setTest(test => {
+      const questions = [
+        ...test.questions,
+        {
+          text: "",
+          complexity: 1,
+          answers: []
+        }
+      ]
+      return {
+        ...test, questions
+      };
+    })
+  }
+
+  const addAnswer = qIndex => {
+    setTest(test => {
+      const questions = [...test.questions];
+      questions[qIndex].answers.push({
+        text: "",
+        correct: false
+      });
+
+      return {
+        ...test, questions
+      };
+    })
+  }
+
+  const deleteQuestion = qIndex => {
+    setTest(test => {
+      test.questions.splice(qIndex, 1);
+
+      return {
+        ...test
+      };
+    });
+  }
+
+  const deleteAnswer = (event, qIndex, aIndex) => {
+    event.stopPropagation()
+    setTest(test => {
+      test.questions[qIndex].answers.splice(aIndex, 1);
+
+      return {
+        ...test
+      };
     });
   }
 
@@ -153,38 +154,48 @@ const App = (props) => {
             <h1>
               <InlineEdit
                 className={classes.InlineEdit}
-                text={test.test_name}
-                paramName="test_name"
+                text={test.name}
+                paramName="name"
                 change={(data) => changeTestName(data)}
               />
             </h1>
             {test.questions.map((question, qIndex) => (
-              <div key={"question_" + question.id} className={classes.Wrapper}>
+              <div key={"question_" + qIndex} className={classes.Wrapper}>
+                <button onClick={() => deleteQuestion(qIndex)}>
+                  Delete question
+                </button>
                 <h3>
-                  <InlineEdit
+                  {qIndex + 1 + ". "}<InlineEdit
                     className={classes.InlineEdit}
-                    text={question.question_name}
-                    paramName="question_name"
-                    change={(data) => changeQuestionName(data, question.id)}
+                    text={question.text}
+                    paramName="text"
+                    change={(data) => changeQuestionName(data, qIndex)}
                   />
                 </h3>
                 <hr />
                 {question.answers.map((answer, aIndex) => (
                   <div
-                    key={"answer_" + answer.id}
-                    className={answer.id === question.correct_answer_id ? classes.Correct : classes.Card}
-                    onClick={() => changeCorrectAnswer(question.id, answer.id)}>
+                    key={"answer_" + aIndex}
+                    className={answer.correct ? classes.Correct : classes.Card}
+                    onClick={() => changeCorrectAnswer(qIndex, aIndex)}>
                       <InlineEdit
                         className={classes.InlineEdit}
-                        text={answer.answer}
-                        paramName="answer"
+                        text={answer.text}
+                        paramName="text"
                         stopPropagation
                         change={data => {
-                          changeAnswer(data, answer.id)}
+                          changeAnswer(data, qIndex, aIndex)}
                         }
                       />
+                    <button
+                      onClick={(event) => deleteAnswer(event, qIndex, aIndex)}
+                    >
+                      Delete answer
+                    </button>
                   </div>
                 ))}
+                <hr />
+                <Button onClick={() => {addAnswer(qIndex)}}>Add answer</Button>
               </div>
             ))}
             <div className={classes.Wrapper}>
