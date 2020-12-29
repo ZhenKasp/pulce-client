@@ -24,6 +24,21 @@
   margin: 20px;
 }
 
+.Wrap span:after {
+  font-size: 20px;
+  margin-left: 5px;
+  content: "\f044";
+  font-family: FontAwesome;
+  display: inline-block;
+  padding-right: 3px;
+  vertical-align: middle;
+  font-weight: 900;
+}
+
+.Wrap {
+  padding: 10px 0;
+}
+
 .Loading {
   width: 64px;
   margin: calc((100vh - 64px) / 2) auto;
@@ -36,10 +51,6 @@
 
 .InlineEdit:hover {
   text-decoration: underline;
-}
-
-.Wrap {
-  padding: 10px 0;
 }
 
 .Answer:hover {

@@ -36,7 +36,6 @@ const App = (props) => {
               {id: 4, answer: '4'}
             ],
             user_answer_id: 2,
-            correct_answer_id: 2,
           },
           {
             id: 2,
@@ -48,7 +47,6 @@ const App = (props) => {
               {id: 8, answer: '10'}
             ],
             user_answer_id: 5,
-            correct_answer_id: 6,
           }
         ]
       });
@@ -91,7 +89,6 @@ const App = (props) => {
   }
 
   const changeAnswer = (data, id) => {
-    console.log(data);
     setTest(test => {
       const questions = test.questions.map(item => {
         const answers = item.answers.map(answer => {
@@ -107,6 +104,45 @@ const App = (props) => {
         ...test, questions
       };
     })
+  }
+
+  const addQuestion = () => {
+    axios.post(process.env.REACT_APP_PATH_TO_SERVER + "createEmptyQuestion")
+    .then(res => {
+      if (res.data.error) {
+        alert(res.data.error)
+      } else {
+        setTest(test => {
+          const questions = [
+            test.questions,
+            {
+              id: res.data.id,
+              question_name: "",
+              answers: [{}, {}, {}, {}]
+            }
+          ]
+          return {
+            ...test, questions
+          };
+        })
+      }
+    }).catch(err => {
+      setTest(test => {
+        const questions = [
+          ...test.questions,
+          {
+            id: 0,
+            question_name: " ",
+            answers: [{}, {}, {}, {}],
+            correct_answer_id: 0
+          }
+        ]
+        return {
+          ...test, questions
+        };
+      })
+      console.log(err);
+    });
   }
 
   return (
@@ -151,6 +187,9 @@ const App = (props) => {
                 ))}
               </div>
             ))}
+            <div className={classes.Wrapper}>
+              <Button onClick={addQuestion}>Add Question</Button>
+            </div>
           </div>
           <Button onClick={() => alert("cofirm")}>Confirm</Button>
         </div> :
