@@ -5,8 +5,10 @@ import classes from './App.module.css'
 import { useHistory } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import ReactLoading from 'react-loading';
+import CreateTestModal from '../CreateTestModal/CreateTestModal.jsx';
 
 const App = (props) => {
+  const [modalIsShown, setModalIsShown] = useState(false);
   const [tests, setTests] = useState([
     { id: 1, name: "First test" },
     { id: 2, name: "2 + 2" },
@@ -44,6 +46,11 @@ const App = (props) => {
       <div>
         <div className={classes.Wrapper}>
           <h1>IndexPage</h1>
+          <CreateTestModal
+            modalIsShownHandler={() => setModalIsShown(true)}
+            modalIsShownCancelHandler={() => setModalIsShown(false)}
+            modalIsShown={modalIsShown}
+          />
             {tests.map(test => (
               <div
                 className={classes.Card}
@@ -51,10 +58,19 @@ const App = (props) => {
                 onClick={() => history.push("user_test/" + test.id)}
               >
                 {test.name}
+                <Button
+                  className={classes.CreateTest}
+                  onClick={event => {
+                    event.stopPropagation();
+                    history.push("edit_test/" + test.id)}
+                  }
+                >
+                  Edit Test
+                </Button>
               </div>
             ))}
         </div>
-        <Button onClick={() => history.push("edit_test")}>Create test</Button>
+        <Button onClick={() => setModalIsShown(true)}>Create test</Button>
       </div> :
       <div className={classes.Loading}>
         <ReactLoading type={"spinningBubbles"} color="#000000" />

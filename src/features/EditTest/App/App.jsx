@@ -11,7 +11,6 @@ const App = (props) => {
   const [test, setTest] = useState([null]);
   const [loading, setLoading] = useState(true);
 
-console.log(test);
   useEffect(() => {
     axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test" + id)
     .then(res => {
@@ -57,6 +56,10 @@ console.log(test);
     });
   }, []);
 
+  const changeTestName = (data) => {
+    setTest({ ...test, test_name: data.test_name })
+  }
+
   const changeQuestionName = (data, id) => {
     setTest(test => {
       const questions = test.questions.map((item) => {
@@ -66,7 +69,40 @@ console.log(test);
           return item;
         }
       });
+      return {
+        ...test, questions
+      };
+    })
+  }
 
+  const changeCorrectAnswer = (questionId, answerId) => {
+    setTest(test => {
+      const questions = test.questions.map((item) => {
+        if (item.id === questionId) {
+          return {...item, correct_answer_id: answerId};
+        } else {
+          return item;
+        }
+      });
+      return {
+        ...test, questions
+      };
+    })
+  }
+
+  const changeAnswer = (data, id) => {
+    console.log(data);
+    setTest(test => {
+      const questions = test.questions.map(item => {
+        const answers = item.answers.map(answer => {
+          if (answer.id === id) {
+            return {...answer, answer: data.answer};
+          } else {
+            return answer;
+          }
+        })
+        return {...item, answers}
+      });
       return {
         ...test, questions
       };
@@ -77,25 +113,46 @@ console.log(test);
     <div>
       {(!loading) ?
         <div>
-          <div className={classes.Wrapper}>
-            <h1>Edit "{test.test_name}"</h1>
+          <div className={classes.Wrap}>
+            <h1>
+              <InlineEdit
+                className={classes.InlineEdit}
+                text={test.test_name}
+                paramName="test_name"
+                change={(data) => changeTestName(data)}
+              />
+            </h1>
             {test.questions.map((question, qIndex) => (
               <div key={"question_" + question.id} className={classes.Wrapper}>
-                <h4>
+                <h3>
                   <InlineEdit
                     className={classes.InlineEdit}
                     text={question.question_name}
                     paramName="question_name"
                     change={(data) => changeQuestionName(data, question.id)}
                   />
-                </h4>
+                </h3>
+                <hr />
                 {question.answers.map((answer, aIndex) => (
-                  <p key={"answer_" + answer.id}>{answer.answer}</p>
+                  <div
+                    key={"answer_" + answer.id}
+                    className={answer.id === question.correct_answer_id ? classes.Correct : classes.Card}
+                    onClick={() => changeCorrectAnswer(question.id, answer.id)}>
+                      <InlineEdit
+                        className={classes.InlineEdit}
+                        text={answer.answer}
+                        paramName="answer"
+                        stopPropagation
+                        change={data => {
+                          changeAnswer(data, answer.id)}
+                        }
+                      />
+                  </div>
                 ))}
               </div>
             ))}
           </div>
-          <Button>Create test</Button>
+          <Button onClick={() => alert("cofirm")}>Confirm</Button>
         </div> :
         <div className={classes.Loading}>
           <ReactLoading type={"spinningBubbles"} color="#000000" />

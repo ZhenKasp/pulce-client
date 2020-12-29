@@ -28,3 +28,8 @@
   width: 64px;
   margin: calc((100vh - 64px) / 2) auto;
 }
+
+.CreateTest {
+  margin-left: auto;
+  padding: 0 10px;
+}
