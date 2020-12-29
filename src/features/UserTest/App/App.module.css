@@ -15,7 +15,7 @@
   font-size: 20px;
 }
 
-.Answer input[type=radio] {
+.Answer input[type=checkbox] {
 	display: none;
 }
 
@@ -34,7 +34,7 @@
   margin-bottom: 0;
 }
 
-.Answer input[type=radio]:checked + label {
+.Answer input[type=checkbox]:checked + label {
 	background: #ffe0a6;
 }
 
@@ -43,7 +43,7 @@
   box-shadow: 0 0px 7px #888;
 }
 
-.Answer input[type=radio]:disabled + label {
+.Answer input[type=checkbox]:disabled + label {
 	background: #efefef;
 	color: #666;
 }

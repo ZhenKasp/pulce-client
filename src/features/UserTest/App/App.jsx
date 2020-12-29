@@ -102,7 +102,7 @@ const App = props => {
               <div key={answer.id} className={classes.Answer}>
                 <input
                   name="answer"
-                  type="radio"
+                  type="checkbox"
                   value={answer.answer}
                   id={`radioButton${answer.id}`}
                   onClick={() => setUserAnswer(answer.id)} />
