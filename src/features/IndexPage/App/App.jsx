@@ -9,6 +9,7 @@ import CreateTestModal from '../CreateTestModal/CreateTestModal.jsx';
 
 const App = (props) => {
   const [modalIsShown, setModalIsShown] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
   const [tests, setTests] = useState([
     { id: 1, name: "First test" },
     { id: 2, name: "2 + 2" },
@@ -23,7 +24,7 @@ const App = (props) => {
     axios.get(process.env.REACT_APP_PATH_TO_SERVER + "tests")
     .then(res => {
       if (res.data.error) {
-        props.createFlashMessage(res.data.error, res.data.variant);
+        alert(res.data.error);
       } else {
         setTests(res.data.tests);
       }
@@ -36,7 +37,7 @@ const App = (props) => {
         { id: 5, name: "5 + 5" },
       ])
       setLoading(false);
-      props.createFlashMessage(err.message, "danger");
+    alert(err.message);
     })
   }, [])
 
@@ -58,19 +59,22 @@ const App = (props) => {
                 onClick={() => history.push("user_test/" + test.id)}
               >
                 {test.name}
-                <Button
-                  className={classes.CreateTest}
-                  onClick={event => {
-                    event.stopPropagation();
-                    history.push("edit_test/" + test.id)}
-                  }
-                >
-                  Edit Test
-                </Button>
+                {isAdmin &&
+                  <Button
+                    className={classes.CreateTest}
+                    onClick={event => {
+                      event.stopPropagation();
+                      history.push("edit_test/" + test.id)}
+                    }
+                  >
+                    Edit Test
+                  </Button>
+                }
               </div>
             ))}
         </div>
-        <Button onClick={() => setModalIsShown(true)}>Create test</Button>
+        {isAdmin && <Button onClick={() => setModalIsShown(true)}>Create test</Button>}
+
       </div> :
       <div className={classes.Loading}>
         <ReactLoading type={"spinningBubbles"} color="#000000" />
@@ -79,14 +83,4 @@ const App = (props) => {
   )
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    createFlashMessage: (text, variant) => dispatch({
-      type: "CREATE_FLASH_MESSAGE",
-      text: text,
-      variant: variant
-    })
-  }
-}
-
-export default connect(null, mapDispatchToProps)(App);
+export default App;

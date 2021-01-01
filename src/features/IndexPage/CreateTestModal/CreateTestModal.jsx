@@ -6,16 +6,16 @@ import axios from 'axios';
 
 const CreateTestModal = props => {
 
-  const submitCreateBook = (event) => {
+  const submitCreateTest = (event) => {
     event.preventDefault();
 
     const object = new FormData(event.target);
     event.persist();
 
-    axios.post(process.env.REACT_APP_PATH_TO_SERVER + 'book', object).then(res =>
+    axios.post(process.env.REACT_APP_PATH_TO_SERVER + 'test', object).then(res =>
       {
         if (res.data.error) {
-
+          alert(res.data.error)
         } else {
 
           props.modalIsShownCancelHandler();
@@ -34,7 +34,7 @@ const CreateTestModal = props => {
         show={props.modalIsShown}
         modalClosed={props.modalIsShownCancelHandler}
       >
-        <Form onSubmit={submitCreateBook}>
+        <Form onSubmit={submitCreateTest}>
           <h3>Create Test</h3>
           <Form.Group>
             <Form.Label>Test name</Form.Label>

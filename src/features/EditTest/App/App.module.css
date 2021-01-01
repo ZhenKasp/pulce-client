@@ -22,6 +22,7 @@
   padding: 20px;
   box-shadow: 0 0 4px #999;
   margin: 20px;
+  position: relative;
 }
 
 .Wrap span:after {
@@ -35,8 +36,16 @@
   font-weight: 900;
 }
 
+.Wrap input {
+  width: calc(100% - 30px);
+}
+
+.Wrap span {
+  margin-right: 10px;
+}
+
 .Wrap {
-  padding: 10px 0;
+  padding: 10px 0 20px 0;
 }
 
 .Loading {
@@ -73,4 +82,52 @@
 
 .Correct:hover {
   box-shadow: 0 0px 7px #888;
+}
+
+.CrossQuestion {
+  cursor: pointer;
+  display: block;
+}
+
+.CrossQuestion:after {
+  position: absolute;
+  top: -17px;
+  font-size: 20px;
+  content: "\f00d" !important;
+  font-family: FontAwesome;
+  left: calc(100% - 30px);
+  top: 3px;
+  color: #999;
+  cursor: pointer;
+  font-weight: 100 !important;
+  display: contents;
+  font-style: normal;
+}
+
+.CrossAnswer {
+  font-style: normal;
+  cursor: pointer;
+}
+
+.CrossAnswer:after {
+  font-size: 20px;
+  content: "\f00d" !important;
+  font-family: FontAwesome;
+  position: absolute;
+  left: calc(100% - 50px);
+  cursor: pointer;
+  color: #999;
+  font-weight: 100 !important;
+}
+
+.ButtonWrapper {
+  display: inline-flex;
+  padding: 5px;
+}
+
+.CustomDropdown {
+  cursor: pointer;
+  margin-left: 30px;
+  padding: auto;
+  align-self: center;
 }
