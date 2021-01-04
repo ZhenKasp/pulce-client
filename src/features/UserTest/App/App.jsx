@@ -3,6 +3,7 @@ import classes from './App.module.css';
 import axios from 'axios';
 import { useHistory, useParams } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
+import authHeader from "../../../service/auth-header";
 import ReactLoading from 'react-loading';
 
 const App = props => {
@@ -10,115 +11,108 @@ const App = props => {
   let { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [question, setQuestion] = useState(null);
-  const [answers, setAnswers] = useState([]);
-  const [userAnswer, setUserAnswer] = useState(null);
-  const [pulse, setPulse] = useState(null);
+  const [userAnswer, setUserAnswer] = useState({questionId: id, answers: []});
+  const [pulse, setPulse] = useState("pulse");
 
-  const getpulse = () => {
-    setPulse(getRandomInt(100));
-    try {
-      axios.get(process.env.REACT_APP_PATH_TO_SERVER + "pulse").then(res => {
-        if (res.data.error) {
-          alert(res.data.error)
-        } else {
-          setPulse(res.data.pulse);
-        }
-      })
-    } catch (err) {
-      console.log(err.message);
-
-    }
-  }
-
-  const getRandomInt = (max) => (
-    Math.floor(Math.random() * Math.floor(max))
-  )
-
-  useEffect(() => {
-    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test/" + id,
-      { headers: { authorization: props.user }}
+  const getPulse = () => {
+    axios.get("http://localhost:8080/api/pulse",
+      {headers: authHeader()}
     ).then(res => {
       if (res.data.error) {
         alert(res.data.error)
       } else {
-        setQuestion(res.data.question);
-        setAnswers(res.data.answers);
+        setPulse(res.data);
+      }
+    }).catch(err => console.log(err));
+  }
+
+  const changeUserAnswer = (id, progress, text, questionId) => {
+    const newAnswer = !userAnswer.answers.some(el => el.id === id);
+
+    setUserAnswer(userAnswer => {
+      const answers = newAnswer ? [...userAnswer.answers, {id, progress, text}] : userAnswer.answers.filter(a => a.id !== id)
+      return {...userAnswer, answers}
+    })
+  }
+  console.log(userAnswer);
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/api/test/" + id,
+      {headers: authHeader()}
+    ).then(res => {
+      if (res.data.error) {
+        alert(res.data.error)
+      } else {
+        console.log(res.data)
+        setQuestion(res.data);
         setLoading(false);
       }
     }).catch(err => {
       console.log(err);
-      alert(err.message)
-
-      setQuestion(1);
-      setAnswers([
-        {id: 1, answer: '1'},
-        {id: 2, answer: '2'},
-        {id: 3, answer: '3'},
-        {id: 4, answer: '4'}
-      ]);
+      alert(err.message);
+      setQuestion({
+        id: 1,
+        text: "Lorem",
+        answers: [
+          {id: 1, text: 'First', progress: 15},
+          {id: 2, text: 'Second', progress: 15},
+          {id: 3, text: 'Third', progress: 15},
+          {id: 4, text: 'Fourth', progress: 15}
+        ]
+      });
       setLoading(false);
     });
-    getpulse();
     const interval = setInterval(() => {
-      getpulse();
+      getPulse();
     }, 2000);
     return () => clearInterval(interval);
   }, []);
 
   const submit = () => {
     setLoading(true);
-    axios.post(process.env.REACT_APP_PATH_TO_SERVER, userAnswer).then(res => {
-      if (res.data.error) {
-        alert(res.data.error)
-      } else {
+    axios.post("http://localhost:8080/api/test/", userAnswer)
+      .then(res => {
+        if (res.data.error) {
+          alert(res.data.error)
+        } else {
+          setLoading(false);
+          setQuestion(res.data);
+        }
+      }).catch((e) => {
         setLoading(false);
-        setQuestion(res.data.question);
-        setAnswers(res.data.answers)
-      }
-    }).catch((e) => {
-      history.push("/test_results/" + id)
-      setLoading(false);
-      setQuestion(question * 2);
-      setAnswers([
-        {id: 1, answer: '6'},
-        {id: 2, answer: '8'},
-        {id: 3, answer: '10'},
-        {id: 4, answer: '13'}
-      ]);
-      setUserAnswer(null);
-      console.log(e);
-    })
+        console.log(e);
+      })
   }
 
   return (
-    <div className={classes.UserTest}>
-      <h1>UserTest</h1>
-      <hr />
+    <div>
       {(!loading) ?
-        <div>
-          <p className={classes.Question}>{question}</p>
-          {answers.map(answer =>
-            { return (
-              <div key={answer.id} className={classes.Answer}>
-                <input
-                  name="answer"
-                  type="checkbox"
-                  value={answer.answer}
-                  id={`radioButton${answer.id}`}
-                  onClick={() => setUserAnswer(answer.id)} />
-                <label htmlFor={`radioButton${answer.id}`}>
-                  {" " + answer.answer}
-                </label><br />
-              </div>
+      <div className={classes.UserTest}>
+        <h1>{question.text}</h1>
+        <hr />
+          <div>
+            {question.answers.map(answer =>
+              { return (
+                <div key={answer.id} className={classes.Answer}>
+                  <input
+                    name="answer"
+                    type="checkbox"
+                    value={answer.text}
+                    id={`radioButton${answer.id}`}
+                    onClick={() => changeUserAnswer(answer.id, answer.progress, answer.text, question.id)} />
+                  <label htmlFor={`radioButton${answer.id}`}>
+                    {" " + answer.text}
+                  </label><br />
+                </div>
+              )}
             )}
-          )}
-          <Button onClick={submit} disabled={!userAnswer}>Submit</Button>
-          <p>{pulse}</p>
-        </div> :
-        <div className={classes.Loading}>
-          <ReactLoading type={"spinningBubbles"} color="#000000" />
-        </div>
-      }
+            <Button onClick={submit} disabled={!userAnswer}>Submit</Button>
+            <p>{pulse}</p>
+          </div>
+      </div> :
+      <div className={classes.Loading}>
+        <ReactLoading type={"spinningBubbles"} color="#000000" />
+      </div>}
     </div>
   )
 }
