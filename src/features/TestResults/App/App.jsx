@@ -64,11 +64,12 @@ const App = props => {
           <hr />
           <div>
             {test[0].questions.map(question => (
-              <div className={classes.Results}>
+              <div className={classes.Results} key={question.id}>
                 <h4>{question.question_name}</h4>
                 <hr />
                 {question.answers.map(answer => (
-                  <p className={
+                  <p key={answer.id} 
+                    className={
                       question.correct_answer_id === answer.id ?
                         classes.Correct :
                         question.user_answer_id === answer.id ?

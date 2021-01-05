@@ -11,7 +11,7 @@ const App = props => {
   let { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [question, setQuestion] = useState(null);
-  const [userAnswer, setUserAnswer] = useState({questionId: id, answers: []});
+  const [userAnswer, setUserAnswer] = useState({id: null, answers: []});
   const [pulse, setPulse] = useState("pulse");
 
   const getPulse = () => {
@@ -27,11 +27,11 @@ const App = props => {
   }
 
   const changeUserAnswer = (id, progress, text, questionId) => {
-    const newAnswer = !userAnswer.answers.some(el => el.id === id);
+    const newAnswer = !userAnswer?.answers.some(el => el.id === id);
 
     setUserAnswer(userAnswer => {
       const answers = newAnswer ? [...userAnswer.answers, {id, progress, text}] : userAnswer.answers.filter(a => a.id !== id)
-      return {...userAnswer, answers}
+      return {...userAnswer, id: questionId, answers}
     })
   }
   console.log(userAnswer);
@@ -80,6 +80,7 @@ const App = props => {
         }
       }).catch((e) => {
         setLoading(false);
+        history.push('/test_results/' + id)
         console.log(e);
       })
   }
@@ -106,7 +107,7 @@ const App = props => {
                 </div>
               )}
             )}
-            <Button onClick={submit} disabled={!userAnswer}>Submit</Button>
+            <Button onClick={submit} disabled={!userAnswer?.answers.length > 0}>Submit</Button>
             <p>{pulse}</p>
           </div>
       </div> :
