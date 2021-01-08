@@ -21,7 +21,7 @@ const App = props => {
       }
     }).catch(err => {
       console.log(err);
-      alert(err.message);
+
       setTest([{
         id: 1,
         test_name: "First test",
@@ -52,35 +52,38 @@ const App = props => {
           }
         ]
       }]);
+
       setLoading(false);
     });
   }, []);
 
   return (
-    <div className={classes.Results}>
+    <div>
       {(!loading) ?
-        <div>
-          <h1>{test[0].test_name}</h1>
-          <hr />
+        <div className={classes.Results}>
           <div>
-            {test[0].questions.map(question => (
-              <div className={classes.Results} key={question.id}>
-                <h4>{question.question_name}</h4>
-                <hr />
-                {question.answers.map(answer => (
-                  <p key={answer.id} 
-                    className={
-                      question.correct_answer_id === answer.id ?
-                        classes.Correct :
-                        question.user_answer_id === answer.id ?
-                          classes.Incorrect :
-                          classes.Answer
-                    }>{answer.answer}</p>
-                ))}
-              </div>
-            ))}
+            <h1>{test[0].test_name}</h1>
+            <hr />
+            <div>
+              {test[0].questions.map(question => (
+                <div className={classes.Results} key={question.id}>
+                  <h4>{question.question_name}</h4>
+                  <hr />
+                  {question.answers.map(answer => (
+                    <p key={answer.id}
+                      className={
+                        question.correct_answer_id === answer.id ?
+                          classes.Correct :
+                          question.user_answer_id === answer.id ?
+                            classes.Incorrect :
+                            classes.Answer
+                      }>{answer.answer}</p>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
-        </div> :
+        </div>:
         <div className={classes.Loading}>
           <ReactLoading type={"spinningBubbles"} color="#000000" />
         </div>

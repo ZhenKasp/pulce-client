@@ -11,8 +11,9 @@ const App = props => {
   let { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [question, setQuestion] = useState(null);
-  const [userAnswer, setUserAnswer] = useState({id: null, answers: []});
+  const [userAnswer, setUserAnswer] = useState({id: null, progress: null, answers: []});
   const [pulse, setPulse] = useState("pulse");
+  const [testStatus, setTestStatus] = useState(null);
 
   const getPulse = () => {
     axios.get("http://localhost:8080/api/pulse",
@@ -30,8 +31,8 @@ const App = props => {
     const newAnswer = !userAnswer?.answers.some(el => el.id === id);
 
     setUserAnswer(userAnswer => {
-      const answers = newAnswer ? [...userAnswer.answers, {id, progress, text}] : userAnswer.answers.filter(a => a.id !== id)
-      return {...userAnswer, id: questionId, answers}
+      const answers = newAnswer ? [...userAnswer.answers, {id, text}] : userAnswer.answers.filter(a => a.id !== id)
+      return {...userAnswer, id: questionId, progress: progress, answers}
     })
   }
   console.log(userAnswer);
@@ -54,10 +55,10 @@ const App = props => {
         id: 1,
         text: "Lorem",
         answers: [
-          {id: 1, text: 'First', progress: 15},
-          {id: 2, text: 'Second', progress: 15},
-          {id: 3, text: 'Third', progress: 15},
-          {id: 4, text: 'Fourth', progress: 15}
+          {id: 1, text: 'First'},
+          {id: 2, text: 'Second'},
+          {id: 3, text: 'Third'},
+          {id: 4, text: 'Fourth'}
         ]
       });
       setLoading(false);
@@ -70,6 +71,7 @@ const App = props => {
 
   const submit = () => {
     setLoading(true);
+    setUserAnswer({id: null, progress: null, answers: []});
     axios.post("http://localhost:8080/api/test/", userAnswer)
       .then(res => {
         if (res.data.error) {
@@ -77,6 +79,7 @@ const App = props => {
         } else {
           setLoading(false);
           setQuestion(res.data);
+          setTestStatus(res.data.textStatus);
         }
       }).catch((e) => {
         setLoading(false);

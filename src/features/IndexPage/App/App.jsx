@@ -5,17 +5,12 @@ import { useHistory } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import ReactLoading from 'react-loading';
 import CreateTestModal from '../CreateTestModal/CreateTestModal.jsx';
+import authHeader from "../../../service/auth-header";
 
 const App = (props) => {
   const [modalIsShown, setModalIsShown] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true);
-  const [tests, setTests] = useState([
-    { id: 1, name: "First test" },
-    { id: 2, name: "2 + 2" },
-    { id: 3, name: "3 + 3" },
-    { id: 4, name: "4 + 4" },
-    { id: 5, name: "5 + 5" },
-  ]);
+  const [tests, setTests] = useState(null);
   const [loading, setLoading] = useState(true);
   let history = useHistory();
 
@@ -40,6 +35,43 @@ const App = (props) => {
     })
   }, [])
 
+  const deleteTest = (event, id) => {
+    event.stopPropagation();
+    setLoading(true);
+    axios.delete("http://localhost:8080/api/quiz/" + id,
+      {headers: authHeader()}
+    ).then(res => {
+      if (res.status === 200) {
+        setTests(() => {
+          const newTests = [];
+          for (let i of tests) {
+            newTests.push(i);
+          }
+
+          newTests.splice(newTests.findIndex((i) => {
+            return i.id === id;
+          }), 1)
+          return newTests
+        });
+      }
+      setLoading(false);
+    }).catch(err => {
+      setTests(() => {
+        const newTests = [];
+        for (let i of tests) {
+          newTests.push(i);
+        }
+
+        newTests.splice(newTests.findIndex((i) => {
+          return i.id === id;
+        }), 1)
+        return newTests
+      });
+      setLoading(false);
+      console.log(err.message);
+    })
+  }
+
   return (
     <div>
       {(!loading) ?
@@ -59,15 +91,21 @@ const App = (props) => {
               >
                 {test.name}
                 {isAdmin &&
-                  <Button
-                    className={classes.CreateTest}
-                    onClick={event => {
-                      event.stopPropagation();
-                      history.push("edit_test/" + test.id)}
-                    }
-                  >
-                    Edit Test
-                  </Button>
+                  <>
+                    <Button
+                      className={classes.CreateTest}
+                      onClick={event => {
+                        event.stopPropagation();
+                        history.push("edit_test/" + test.id)}
+                      }
+                    >
+                      Edit Test
+                    </Button>
+                    <span
+                      className={classes.CrossTest}
+                      onClick={event => deleteTest(event, test.id)}
+                    />
+                  </>
                 }
               </div>
             ))}

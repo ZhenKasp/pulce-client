@@ -9,10 +9,16 @@
   padding: 5px 10px;
   flex: 1;
   display: flex;
+  line-height: 25px;
+  text-align: center;
 }
 
 .Card:hover {
   box-shadow: 0 0px 7px #888;
+}
+
+.Card span {
+  margin-left: 10px;
 }
 
 .Wrapper {
@@ -32,4 +38,24 @@
 .CreateTest {
   margin-left: auto;
   padding: 0 10px;
+}
+
+.CrossTest {
+  cursor: pointer;
+  display: block;
+}
+
+.CrossTest:after {
+  position: absolute;
+  top: -17px;
+  font-size: 20px;
+  content: "\f00d" !important;
+  font-family: FontAwesome;
+  left: calc(100% - 30px);
+  top: 3px;
+  color: #999;
+  cursor: pointer;
+  font-weight: 100 !important;
+  display: contents;
+  font-style: normal;
 }
