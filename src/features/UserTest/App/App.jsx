@@ -16,7 +16,7 @@ const App = props => {
   const [testStatus, setTestStatus] = useState(null);
 
   const getPulse = () => {
-    axios.get("http://localhost:8080/api/pulse",
+    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "pulse",
       {headers: authHeader()}
     ).then(res => {
       if (res.data.error) {
@@ -38,7 +38,7 @@ const App = props => {
   console.log(userAnswer);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/test/" + id,
+    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test/" + id,
       {headers: authHeader()}
     ).then(res => {
       if (res.data.error) {
@@ -72,7 +72,7 @@ const App = props => {
   const submit = () => {
     setLoading(true);
     setUserAnswer({id: null, progress: null, answers: []});
-    axios.post("http://localhost:8080/api/test/", userAnswer)
+    axios.post(process.env.REACT_APP_PATH_TO_SERVER + "test/", userAnswer)
       .then(res => {
         if (res.data.error) {
           alert(res.data.error)

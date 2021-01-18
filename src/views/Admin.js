@@ -10,7 +10,7 @@ const Admin = () => {
     const [checked, setChecked] = useState([]);
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/admin/useredit",
+        axios.get(process.env.REACT_APP_PATH_TO_SERVER + "admin/useredit",
             {headers: authHeader()})
         .then(res => setData(res.data))
         .catch(e => console.log(e));
@@ -57,10 +57,10 @@ const Admin = () => {
 
     const doChange = (newrole) => {
         console.log({newrole,checked});
-        axios.post("http://localhost:8080/api/admin/useredit",
+        axios.post(process.env.REACT_APP_PATH_TO_SERVER + "admin/useredit",
             { newrole, checked }, { headers: authHeader() })
         .then(res => {
-                if (res.status == 200) {
+                if (res.status === 200) {
                     setData(res.data);
                 } else {
                     console.log('No success, as usual. Fuck this shit?');

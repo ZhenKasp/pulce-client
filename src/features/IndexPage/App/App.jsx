@@ -16,7 +16,7 @@ const App = (props) => {
 
   useEffect(() => {
     setIsAdmin(JSON.parse(localStorage.getItem("user")) ? JSON.parse(localStorage.getItem("user")).roles.includes("ADMIN") : false)
-    axios.get("http://localhost:8080/api/quiz",
+    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "quiz",
       {headers: authHeader()}
     ).then(res => {
       if (res.status !== 200) {
@@ -34,7 +34,7 @@ const App = (props) => {
   const deleteTest = (event, id) => {
     event.stopPropagation();
     setLoading(true);
-    axios.delete("http://localhost:8080/api/quiz/" + id,
+    axios.delete(process.env.REACT_APP_PATH_TO_SERVER + "quiz/" + id,
       {headers: authHeader()}
     ).then(res => {
       if (res.status === 200) {

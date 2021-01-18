@@ -5,7 +5,7 @@ import axios from 'axios';
 
 function Profile() {
     // let result = () => {
-    //     axios.get("http://localhost:8080/api/test/user",
+    //     axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test/user",
     //         {headers: authHeader()}) .then(result => {console.log(result)
 
     //     })};

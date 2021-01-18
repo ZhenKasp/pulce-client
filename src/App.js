@@ -27,7 +27,7 @@ const App = () => {
     history.listen((location, action) => {
       console.log(JSON.parse(localStorage.getItem('user')) && !location.pathname.includes('user_test'))
       if (JSON.parse(localStorage.getItem('user')) && !location.pathname.includes('user_test')) {
-        axios.get("http://localhost:8080/api/test",
+        axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test",
           {headers: authHeader()}
         ).then(res => {
           if (res.data.quizId) {
@@ -38,7 +38,7 @@ const App = () => {
     });
 
     if (JSON.parse(localStorage.getItem('user'))) {
-      axios.get("http://localhost:8080/api/test",
+      axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test",
         {headers: authHeader()}
       ).then(res => {
         if (res.data.quizId) {

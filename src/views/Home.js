@@ -5,7 +5,7 @@ import axios from 'axios';
 
 function Home() {
     // let result=function () {
-    // axios.get("http://localhost:8080/api/test/all").then(result => {console.log(result)
+    // axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test/all").then(result => {console.log(result)
 
     // })};
     return (

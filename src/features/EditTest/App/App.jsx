@@ -16,7 +16,7 @@ const App = (props) => {
   let history = useHistory();
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/quiz/" + id,
+    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "quiz/" + id,
     {headers: authHeader()}
     ).then(res => {
       if (res.data.error) {
@@ -130,7 +130,7 @@ const App = (props) => {
 
   const updateTest = () => {
     setLoading(true);
-    axios.put("http://localhost:8080/api/quiz",
+    axios.put(process.env.REACT_APP_PATH_TO_SERVER + "quiz",
       test, {headers: authHeader()}
     ).then(res => {
       if (res.status === 200) {

@@ -11,7 +11,7 @@ const App = props => {
   const [userAnswers, setUserAnswers] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/test/result/" + id,
+    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test/result/" + id,
       { headers: { authorization: props.user }}
     ).then(res => {
       if (res.data.error) {

@@ -11,7 +11,7 @@ const Results = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/results",
+    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "results",
       {headers: authHeader()}
     ).then(res => {
       if (res.status !== 200) {

@@ -16,7 +16,7 @@ function Login() {
         if (username === '' || password === '') {
             setError('Fill in all the fields.');
         } else {
-            axios.post("http://localhost:8080/api/auth/signin",
+            axios.post(process.env.REACT_APP_PATH_TO_SERVER + "auth/signin",
                 { username, password },
                 { withCredentials:true })
                 .then(response => { console.log(response.data)
@@ -24,7 +24,7 @@ function Login() {
                         localStorage.setItem("user", JSON.stringify(response.data));
                         setLoggedin(true);
                         setUser(response.data.username)
-                    }else  {
+                    } else  {
                         setError(response.data.resp.msg);
                     }
                 }).catch(e => {

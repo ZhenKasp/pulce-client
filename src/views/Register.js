@@ -26,7 +26,7 @@ function Register() {
         if (username === '' || password === '') {
             setError('Fill in all the fields.');
         } else {
-            axios.post("http://localhost:8080/api/auth/signup",
+            axios.post(process.env.REACT_APP_PATH_TO_SERVER + "auth/signup",
                 {
                     username,
                     password,

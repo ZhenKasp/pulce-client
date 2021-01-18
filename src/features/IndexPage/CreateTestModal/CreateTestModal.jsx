@@ -11,7 +11,7 @@ const CreateTestModal = props => {
   let history = useHistory();
 
   const submitCreateTest = () => {
-    axios.post("http://localhost:8080/api/quiz",
+    axios.post(process.env.REACT_APP_PATH_TO_SERVER + "quiz",
       name,
       {
         headers: {

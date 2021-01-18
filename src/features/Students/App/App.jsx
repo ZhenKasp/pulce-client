@@ -16,7 +16,7 @@ const App = props => {
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/results/" + id,
+    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "results/" + id,
       { headers: authHeader() }
     ).then(res => {
       if (res.data.error) {
