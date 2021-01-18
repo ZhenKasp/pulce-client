@@ -8,51 +8,21 @@ const App = props => {
   let { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [test, setTest] = useState(null);
+  const [userAnswers, setUserAnswers] = useState(null);
 
   useEffect(() => {
-    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test_results/" + id,
+    axios.get("http://localhost:8080/api/test/result/" + id,
       { headers: { authorization: props.user }}
     ).then(res => {
       if (res.data.error) {
         alert(res.data.error)
       } else {
-        setTest([res.data.test])
+        setTest(res.data.allQuizDto);
+        setUserAnswers(res.data.userAnswers);
         setLoading(false);
       }
     }).catch(err => {
       console.log(err);
-
-      setTest([{
-        id: 1,
-        test_name: "First test",
-        questions: [
-          {
-            id: 1,
-            question_name: "1 + 1",
-            answers: [
-              {id: 1, answer: '1'},
-              {id: 2, answer: '2'},
-              {id: 3, answer: '3'},
-              {id: 4, answer: '4'}
-            ],
-            user_answer_id: 2,
-            correct_answer_id: 2,
-          },
-          {
-            id: 2,
-            question_name: "2 + 2 * 2",
-            answers: [
-              {id: 5, answer: '8'},
-              {id: 6, answer: '6'},
-              {id: 7, answer: '7'},
-              {id: 8, answer: '10'}
-            ],
-            user_answer_id: 5,
-            correct_answer_id: 6,
-          }
-        ]
-      }]);
-
       setLoading(false);
     });
   }, []);
@@ -62,22 +32,22 @@ const App = props => {
       {(!loading) ?
         <div className={classes.Results}>
           <div>
-            <h1>{test[0].test_name}</h1>
+            <h1>{test.name}</h1>
             <hr />
             <div>
-              {test[0].questions.map(question => (
+              {test.questions.map(question => (
                 <div className={classes.Results} key={question.id}>
-                  <h4>{question.question_name}</h4>
+                  <h4>{question.text}</h4>
                   <hr />
                   {question.answers.map(answer => (
                     <p key={answer.id}
                       className={
-                        question.correct_answer_id === answer.id ?
+                        answer.correct ?
                           classes.Correct :
-                          question.user_answer_id === answer.id ?
+                          userAnswers.find((el) => (el.id === answer.id)) ?
                             classes.Incorrect :
                             classes.Answer
-                      }>{answer.answer}</p>
+                      }>{answer.text}</p>
                   ))}
                 </div>
               ))}

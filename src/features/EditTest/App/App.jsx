@@ -6,58 +6,28 @@ import Button from 'react-bootstrap/Button';
 import ReactLoading from 'react-loading';
 import InlineEdit from 'react-edit-inline2';
 import Dropdown from 'react-bootstrap/Dropdown';
+import authHeader from "../../../service/auth-header";
+import { useHistory } from "react-router-dom";
 
 const App = (props) => {
   let { id } = useParams();
   const [test, setTest] = useState([null]);
   const [loading, setLoading] = useState(true);
+  let history = useHistory();
 
   useEffect(() => {
-    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test" + id)
-    .then(res => {
+    axios.get("http://localhost:8080/api/quiz/" + id,
+    {headers: authHeader()}
+    ).then(res => {
       if (res.data.error) {
         alert(res.data.error)
       } else {
-        setTest(res.data.test);
+        setTest(res.data);
         setLoading(false);
       }
     }).catch(err => {
       console.log(err);
-      setTest({
-        id: 1,
-        name: "testname",
-        questions: [
-          {
-            id: 3,
-            text: "questionname",
-            complexity: 3,
-            answers: []
-          },
-          {
-            id: 2,
-            text: "qweqw",
-            complexity: 2,
-            answers: [
-              { id: 8, text: "zxc", correct: false },
-              { id: 5, text: "qweq", correct: false },
-              { id: 7, text: "asdas", correct: false },
-              { id: 6, text: "qweasd", correct: true }
-            ]
-          },
-          {
-            id: 1,
-            text: "qweq",
-            complexity: 1,
-            answers: [
-              { id: 4, text: "zxc", correct: false },
-              { id: 1, text: "qweq", correct: true },
-              { id: 3, text: "asdas", correct: false },
-              { id: 2, text: "qwe", correct: false }
-            ]
-          }
-        ]
-      });
-      setLoading(false);
+      setLoading(true);
     });
   }, []);
 
@@ -158,6 +128,22 @@ const App = (props) => {
     })
   }
 
+  const updateTest = () => {
+    setLoading(true);
+    axios.put("http://localhost:8080/api/quiz",
+      test, {headers: authHeader()}
+    ).then(res => {
+      if (res.status === 200) {
+        history.push("/");
+        setLoading(false);
+      }
+    }).catch(err => {
+      console.log(err.message);
+      setLoading(false);
+    });
+  }
+
+
   return (
     <div>
       {(!loading) ?
@@ -235,7 +221,7 @@ const App = (props) => {
               Add Question
             </Button>
           </div>
-          <Button onClick={() => alert("cofirm")}>Confirm</Button>
+          <Button onClick={updateTest}>Confirm</Button>
         </div> :
         <div className={classes.Loading}>
           <ReactLoading type={"spinningBubbles"} color="#000000" />

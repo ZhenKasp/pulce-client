@@ -1,26 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from '../../UI/Modal/Modal';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
+import authHeader from "../../../service/auth-header";
+import { useHistory } from "react-router-dom";
 
 const CreateTestModal = props => {
+  const [name, setName] = useState('');
+  let history = useHistory();
 
-  const submitCreateTest = (event) => {
-    event.preventDefault();
-
-    const object = new FormData(event.target);
-    event.persist();
-
-    axios.post(process.env.REACT_APP_PATH_TO_SERVER + 'test', object).then(res =>
+  const submitCreateTest = () => {
+    axios.post("http://localhost:8080/api/quiz",
+      name,
       {
-        if (res.data.error) {
-          alert(res.data.error)
-        } else {
-          props.modalIsShownCancelHandler();
-          event.target.reset();
+        headers: {
+          ...authHeader(),
+          'Content-Type': 'text/plain'
         }
       }
+    ).then(res => {
+      if (res.data.error) {
+        console.log(res.data.error);
+        setName(null);
+      } else {
+        props.modalIsShownCancelHandler();
+        history.push("edit_test/" + res.data);
+      }
+    }
     ).catch((err) => {
       alert(err);
       props.modalIsShownCancelHandler();
@@ -33,20 +40,18 @@ const CreateTestModal = props => {
         show={props.modalIsShown}
         modalClosed={props.modalIsShownCancelHandler}
       >
-        <Form onSubmit={submitCreateTest}>
-          <h3>Create Test</h3>
-          <Form.Group>
-            <Form.Label>Test name</Form.Label>
-            <Form.Control
-              maxLength="255"
-              required type="text"
-              placeholder="Test name"
-              name="name"
-            />
-          </Form.Group>
-
-          <Button type="submit">Confirm</Button>
-        </Form>
+        <h3>Create Test</h3>
+        <Form.Group>
+          <Form.Label>Test name</Form.Label>
+          <Form.Control
+            maxLength="255"
+            required type="text"
+            placeholder="Test name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+        </Form.Group>
+        <Button onClick={submitCreateTest}>Confirm</Button>
       </Modal>
     </div>
   )

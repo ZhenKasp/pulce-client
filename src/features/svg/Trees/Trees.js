@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Globe = () => {
+const Trees = () => {
   return (
     <svg width="100%" height="121" viewBox="0 0 726 121" fill="none" xmlns="http://www.w3.org/2000/svg" style={{backgroundColor: '#33383C', paddingTop: "20px"}}>
     <path d="M135.773 92.2436L143.323 80.8686C144.298 79.3936 146.473 79.3936 147.448 80.8686L154.998 92.2436C156.023 93.7686 155.073 95.8686 153.248 96.0686C148.023 96.6936 142.773 96.6936 137.548 96.0686C135.698 95.8686 134.748 93.7936 135.773 92.2436Z" fill="#15805D"/>
@@ -35,4 +35,4 @@ const Globe = () => {
   )
 }
 
-export default Globe;
+export default Trees;

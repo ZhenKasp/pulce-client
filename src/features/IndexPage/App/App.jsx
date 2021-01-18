@@ -1,38 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import classes from './App.module.css';
+import classes from './App.module.css'
 import { useHistory } from "react-router-dom";
+import authHeader from "../../../service/auth-header";
 import Button from 'react-bootstrap/Button';
 import ReactLoading from 'react-loading';
 import CreateTestModal from '../CreateTestModal/CreateTestModal.jsx';
-import authHeader from "../../../service/auth-header";
 
 const App = (props) => {
   const [modalIsShown, setModalIsShown] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(true);
   const [tests, setTests] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(null);
   let history = useHistory();
 
   useEffect(() => {
-    axios.get(process.env.REACT_APP_PATH_TO_SERVER + "tests")
-    .then(res => {
-      if (res.data.error) {
+    setIsAdmin(JSON.parse(localStorage.getItem("user")) ? JSON.parse(localStorage.getItem("user")).roles.includes("ADMIN") : false)
+    axios.get("http://localhost:8080/api/quiz",
+      {headers: authHeader()}
+    ).then(res => {
+      if (res.status !== 200) {
         alert(res.data.error);
       } else {
-        setTests(res.data.tests);
+        setTests(res.data);
+        setLoading(false);
       }
     }).catch(err => {
-      setTests([
-        { id: 1, name: "Second test" },
-        { id: 2, name: "2 + 2" },
-        { id: 3, name: "3 + 3" },
-        { id: 4, name: "4 + 4" },
-        { id: 5, name: "5 + 5" },
-      ])
-      setLoading(false);
-    alert(err.message);
-    })
+      history.replace('/signin');
+
+    });
   }, [])
 
   const deleteTest = (event, id) => {
@@ -77,41 +73,57 @@ const App = (props) => {
       {(!loading) ?
       <div>
         <div className={classes.Wrapper}>
-          <h1>IndexPage</h1>
+          <h1>Tests</h1>
           <CreateTestModal
             modalIsShownHandler={() => setModalIsShown(true)}
             modalIsShownCancelHandler={() => setModalIsShown(false)}
             modalIsShown={modalIsShown}
           />
-            {tests.map(test => (
-              <div
-                className={classes.Card}
-                key={test.id}
-                onClick={() => history.push("user_test/" + test.id)}
-              >
-                {test.name}
-                {isAdmin &&
-                  <>
-                    <Button
-                      className={classes.CreateTest}
-                      onClick={event => {
-                        event.stopPropagation();
-                        history.push("edit_test/" + test.id)}
-                      }
-                    >
-                      Edit Test
-                    </Button>
-                    <span
-                      className={classes.CrossTest}
-                      onClick={event => deleteTest(event, test.id)}
-                    />
-                  </>
-                }
-              </div>
-            ))}
+            {tests.length > 0 ?
+              (tests.map(test => (
+                <div
+                  className={classes.Card}
+                  key={test.id}
+                  onClick={() => history.push("user_test/" + test.id)}
+                >
+                  {test.name}
+                  {isAdmin ?
+                    <div className={classes.CardButtons}>
+                      <Button
+                        className={classes.CardButton}
+                        onClick={event => {
+                          event.stopPropagation();
+                          history.push("students/" + test.id)}
+                        }
+                      >
+                        Results by test
+                      </Button>
+                      <Button
+                        className={classes.CardButton}
+                        onClick={event => {
+                          event.stopPropagation();
+                          history.push("edit_test/" + test.id)}
+                        }
+                      >
+                        Edit Test
+                      </Button>
+                      <Button
+                        className={classes.CardButton}
+                        variant="danger"
+                        onClick={ event => {
+                          event.stopPropagation();
+                          deleteTest(event, test.id)}
+                        }
+                      >
+                        Delete Test
+                      </Button>
+                    </div> : null
+                  }
+                </div>
+              ))) : <p>No tests</p>
+            }
+            <Button className={classes.Button} onClick={() => setModalIsShown(true)}>Create test</Button>
         </div>
-        {isAdmin && <Button onClick={() => setModalIsShown(true)}>Create test</Button>}
-
       </div> :
       <div className={classes.Loading}>
         <ReactLoading type={"spinningBubbles"} color="#000000" />
