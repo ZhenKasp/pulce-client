@@ -2,8 +2,10 @@ import React, {useState} from 'react';
 import '../App.css';
 import {Button, Form,Card,Alert, Col} from 'react-bootstrap';
 import axios from 'axios';
+import { useHistory } from "react-router-dom";
 
 function Register() {
+    let history = useHistory();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -44,6 +46,7 @@ function Register() {
                     setUsername(username);
                     setCongratulations('Congratulations')
                     setError("");
+                    history.replace('/signin');
                 }else  {
                     setError(result.data.msg);
                 }

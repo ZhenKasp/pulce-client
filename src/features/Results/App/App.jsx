@@ -3,7 +3,7 @@ import authHeader from "../../../service/auth-header";
 import axios from 'axios';
 import classes from './App.module.css';
 import ReactLoading from 'react-loading';
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const Results = () => {
   let history = useHistory();

@@ -122,7 +122,13 @@ const App = (props) => {
                 </div>
               ))) : <p>No tests</p>
             }
-            <Button className={classes.Button} onClick={() => setModalIsShown(true)}>Create test</Button>
+            {isAdmin ?
+              <Button
+                className={classes.Button}
+                onClick={() => setModalIsShown(true)}>
+                Create test
+              </Button> : null
+            }
         </div>
       </div> :
       <div className={classes.Loading}>
