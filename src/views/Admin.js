@@ -56,7 +56,6 @@ const Admin = () => {
       };
 
     const doChange = (newrole) => {
-        console.log({newrole,checked});
         axios.post(process.env.REACT_APP_PATH_TO_SERVER + "admin/useredit",
             { newrole, checked }, { headers: authHeader() })
         .then(res => {

@@ -25,7 +25,6 @@ const App = () => {
 
   useEffect(() => {
     history.listen((location, action) => {
-      console.log(JSON.parse(localStorage.getItem('user')) && !location.pathname.includes('user_test'))
       if (JSON.parse(localStorage.getItem('user')) && !location.pathname.includes('user_test')) {
         axios.get(process.env.REACT_APP_PATH_TO_SERVER + "test",
           {headers: authHeader()}

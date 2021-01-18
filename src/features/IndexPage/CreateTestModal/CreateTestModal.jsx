@@ -21,7 +21,6 @@ const CreateTestModal = props => {
       }
     ).then(res => {
       if (res.data.error) {
-        console.log(res.data.error);
         setName(null);
       } else {
         props.modalIsShownCancelHandler();

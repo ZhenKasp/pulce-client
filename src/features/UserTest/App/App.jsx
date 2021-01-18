@@ -44,7 +44,6 @@ const App = props => {
       if (res.data.error) {
         alert(res.data.error)
       } else {
-        console.log(res.data)
         setQuestion(res.data);
         setLoading(false);
       }
@@ -72,7 +71,7 @@ const App = props => {
   const submit = () => {
     setLoading(true);
     setUserAnswer({id: null, progress: null, answers: []});
-    axios.post(process.env.REACT_APP_PATH_TO_SERVER + "test/", userAnswer)
+    axios.post(process.env.REACT_APP_PATH_TO_SERVER + "test", userAnswer)
       .then(res => {
         if (res.data.error) {
           alert(res.data.error)
